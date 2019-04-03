@@ -89,7 +89,7 @@ class LeftNav extends Component {
       <Fragment>
         <Link to="/home" className="logo" onClick={this.handleClick}>
           <img src={logo} alt="logo"/>
-          <h1 style={{opacity}}>地壳知讯</h1>
+          <h1 style={{opacity}}>硅谷后台</h1>
         </Link>
         <Menu theme="dark" selectedKeys={[pathname]} mode="inline" openKeys={this.state.openKeys} onOpenChange={this.handleOpenChange}>
           {
