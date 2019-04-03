@@ -4,20 +4,61 @@
 
 import React, { Component } from 'react'
 import {
-    Form, Icon, Input, Button
+    Form, Icon, Input, Button, message
 } from 'antd'    //按需引入
 
-import logo from './logo.png'
+import { reqLogin } from '../../api';
+import { setItem } from '../../utils/storage-utils';
+
+import logo from '../../assets/images/logo.png'
 import './index.less'
 
+// console.log(reqLogin)
 const Item = Form.Item;   //替换成Item
 
 
 @Form.create()
 class Login extends Component {
-
+    //事件处理
     login = (e) => {
         e.preventDefault();
+
+        // 校验表单是否通过
+        // 获取一组表单数据
+        // const result = this.props.form.getFieldsValue();
+        // 获取部分表单数据
+        // const result = this.props.form.getFieldsValue(['username']);
+        // 获取单个表单数据
+        // const result = this.props.form.getFieldValue('password');
+        // console.log(result);
+        // 表单校验的方法
+        this.props.form.validateFields(async (err, values) => {
+            if (!err) {
+                //校验成功
+                console.log(values)
+                const { username, password } = values
+                console.log(username,password)
+                const result = await reqLogin(username, password);
+                console.log(result)        
+                if (result.status === 0) {
+                    //登录成功
+                    //提示登录成功, 保存用户登录信息, 跳转到主页面
+                    message.success('登录success~')
+                    setItem(result.data);
+                    //已经登录成功, 不需要回退了~
+                    this.props.history.replace('/')
+                } else {
+                    // 登录失败
+                    // 提示错误
+                    message.error(result.msg, 2)
+                }
+            } else {
+                // 校验失败
+                console.log('****** 表单校验失败 ******');
+                console.log(err);
+                console.log('****** 表单校验失败 ******');
+            }
+        })
     }
     /** 
      * 自定义表单的校验规则
@@ -51,7 +92,7 @@ class Login extends Component {
                 </header>
                 <section className="login-content">
                     <h3>用户登录</h3>
-                    <Form onSubmit={this.handleSubmit} className="login-form">
+                    <Form onSubmit={this.login} className="login-form">
                         <Item>
                             {
                                 // getFieldDecorator() 返回值是一个高阶组件
